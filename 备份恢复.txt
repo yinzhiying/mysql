@@ -1,0 +1,15 @@
+//导出数据
+use xscj;
+select * from kc
+into outfile 'd:/file/myfile1.txt'
+fields terminated by '"'
+lines terminated by '?';
+
+//文件备份完后可以讲文件中的数据导入到course表中
+create table course1 like kc;
+
+load data infile 'd:/file/myfile1.txt'
+into table course1
+fields terminated by ','
+optionally enclosed by '"'
+lines terminated by '?';
