@@ -1,0 +1,130 @@
+1、 检索至少选修了课程号为102号和201号的学生学号（表的自身连接实现）；
+    select 学号 
+    from xs_kc 
+     where (课程号='101' )and (学号 in
+      (select 学号 from xs_kc where 课程号='102'));
+2、输出学生成绩在80-90分之间的学生名单，列出学号、姓名、分数、课程名
+ select xs.学号,姓名,成绩,课程名
+from xs,kc,xs_kc
+where xs.学号=xs_kc.学号 and kc.课程号=xs_kc.课程号 and 成绩>=80 and 成绩<=90;
+
+#1、查询选修课程号为‘102’的学生的学号和成绩
+select 学号,成绩
+from xs_kc
+where 课程号='102';
+#2、查询选修课程号为102或201且分数大于等于85分学生的学号、课程号和成绩
+select 学号,课程号,成绩
+from xs_kc
+where (课程号='102'or 课程号='201')and 成绩>=85;
+#3、查询既不是女生，年龄也不是20岁的学生
+select *
+from xs
+where 性别<>'女' and (year(current_date)-year(出生日期))<>20;
+#4、查询学号倒数第二个数字为0的学生的情况
+select *
+from xs
+where 学号 like '%0_';
+
+#1、 输出王敏同学所在系的学生清单；（使用IN和复合条件查询分别实现）
+select *
+from xs
+where 专业名 in
+(select 专业名
+from xs
+where 姓名='王敏'
+);
+
+2、 使用 ALL输出所有成绩都高于90分的学生名单，列出其学生学号、姓名、分数和课程号；
+ select xs.学号,姓名,成绩,课程号
+ from xs,xs_kc
+where xs.学号=xs_kc.学号 and 90<all
+(select 成绩
+from xs_kc
+where xs.学号=xs_kc.学号
+);
+3、分别使用IN和EXISTS检索至少选修了课程号为102和101的学生学号；
+select 学号 
+    from xs_kc 
+     where (课程号='102' )and (学号 in
+      (select 学号 from xs_kc where 课程号='101'));
+select 学号
+from xs_kc as a
+where exists(
+select *
+ from xs_kc as b
+where a.课程号='102' and b.课程号='101'and a.学号=b.学号);
+
+4、查询没有选修课程号为102，也没有选修课程号为101的学生的学号、课程号和成绩；
+select 学号 ,课程号,成绩
+    from xs_kc 
+     where (课程号<>'102' )and (学号  not in
+      (select 学号 from xs_kc where 课程号='101'));
+/*select 学号 ,课程号,成绩
+    from xs_kc 
+     where 学号 not in
+      (select 学号 
+    from xs_kc 
+    where 课程号='102' or 课程号='101');
+select 学号 ,课程号,成绩
+    from xs_kc as a 
+     where not exists
+      (select * from xs_kc as b
+ where a.课程号='101'and b.课程号='102' and a.学号=b.学号);*/
+
+
+5、检索所有课程都及格的学生的学号、平均成绩；（至少有四种方法可以实现此查询）。
+not in（不及格学生）
+/*select 学号,avg(成绩) as 平均成绩
+from xs_kc
+where * not in（
+select 成绩
+from xs_kc
+where 成绩<60
+）group by 学号;*/
+
+not exists （该学生不及格的选课记录）
+
+select 学号,avg(成绩) as 平均成绩
+from xs_kc
+where not exists
+(select *
+from xs_kc
+where 成绩<60)
+group by 学号;
+
+
+集函数（最小成绩>60）
+select 学号,avg(成绩) as 平均成绩
+from xs_kc
+where min(成绩)>60;
+
+6、查找选修了全部课程的同学的姓名。
+select 姓名
+from xs
+where not exists
+(
+select *
+from kc
+where not exists
+(
+select *
+from xs_kc
+where 学号=xs.学号 and 课程号=kc.课程号
+)
+);
+1、查询每个专业男、女生人数
+select 专业名,性别,count(*) as '人数'
+from xs
+group by 专业名,性别
+(with rollup);
+2、查找选修课程超过2门且成绩都在80分以上的学生的学号。
+select 学号
+from xs_kc
+where 成绩>=80
+group by 学号
+having count(*)>2;
+3、查找xs表中从第4位同学开始的5位学生的信息。
+select *
+from xs
+order by 学号
+limit 3,5;

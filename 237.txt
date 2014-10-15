@@ -1,0 +1,27 @@
+将xs表复制一份xs2
+create table xs2 like xs;
+insert into xs2 (select* from xs);
+参照例题创建表xs1 5.12
+create table xs1
+(
+学号 varchar(6) null,
+姓名 varchar(8) not null,
+出生日期 datetime null,
+primary key (姓名),
+foreign key(学号)
+references xs2(学号)
+on delete cascade
+on update cascade
+);
+将xs2的内容插入到xs1
+update xs2 set 姓名='王丹'
+where 学号='081101';
+insert into xs1 (select 学号,姓名,出生日期 from xs2);
+
+删除xs2表中某个学生的信息，看是否能成功
+delete from xs2
+where 姓名='王森';
+
+删除xs2表中的某个有选修课信息的学生，看是否成功
+delete from xs2
+

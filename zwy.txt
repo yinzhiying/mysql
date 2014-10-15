@@ -1,0 +1,53 @@
+#配置中文
+show variables like'char%';
+set character_set_client='gbk';
+
+
+--创建xscj数据表
+create database if not exists xscj character set gbk collate gbk_chinese_ci;
+#将当前数据库设置为新建的数据库
+use xscj;
+#创建xs表
+create table xs
+(
+学号 char(6) not null primary key,
+姓名 char(8) not null,
+专业名 char(10) null,
+性别 tinyint(1) not null default 1,
+出生日期 date not null,
+总学分 tinyint(1) null,
+照片 blob null,
+备注 text null
+)engine=innodb;
+#创建KC表
+create table kc
+(
+课程号 char(3) not null primary key,
+课程名 char(16) not null,
+开学学期 tinyint(1) not null default 1,
+学时 tinyint(1) not null,
+学分 tinyint(1) null
+)engine=innodb;
+#创建xs_kc表
+create table xs_kc
+(
+学号 char(6) not null,
+课程号 char(3) not null,
+成绩 tinyint(1) null,
+学分 tinyint(1) null,
+primary key (学号,课程号)
+)engine=innodb;
+#复制KC表为kc2；
+create table kc2 like (select *from kc);
+#为"KC2"表增加一列cno，并将该列设置为自增属性，并将其添加到第一个属性的位置；增加“开课院系”字段；
+alter table kc2 add column cno tinyint  unique  auto_increment first;
+alter table kc2 add column 开课院系 char(10) null;
+#将KC2表总的开学学期的默认值修改为"2"
+alter table kc2 alter 开学学期 set default 2;
+#将KC2表中的学时改名为“学时数”
+alter table kc2 change 学时 学时数 integer;
+
+#将KC2中学时数字段类型修改为tinyint(3)，并且数据位数不足3时，以零填充
+alter table kc2 modify 学时数 tinyint(3) zerofill;
+#删除开课院系字段；
+alter table kc2 drop 开课院系;

@@ -1,0 +1,23 @@
+update xs
+set 出生日期='1989-02-15'
+where 学号='081101';
+
+
+
+update xs_kc
+set 成绩=89
+where 学号=(select 学号 from xs where 姓名='王燕') and 课程号=(select 课程号 from kc where 课程名='程序设计与语言');
+
+
+delete from xs
+
+
+
+
+
+
+
+
+
+
+

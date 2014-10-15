@@ -1,0 +1,25 @@
+1、创建一个学生选课情况试图S_C_Score，包括学号、姓名、课程名及成绩
+create view S_C_Score
+as
+select xs.学号,姓名,课程名,成绩
+from xs_kc,xs,kc
+where xs.学号=xs_kc.学号 and kc.课程号=xs_kc.课程号;
+
+2、将每门课程和它的平均成绩定义为一个试图CNO_AVG；
+create view CNO_AVG
+as
+select 课程号,avg(成绩) as '平均成绩'
+from xs_kc
+group by 课程号;
+1、在视图S_C_Score上查询王林的选课情况；（如果你自己设计的数据表中不存在王林，则可查询你数据表中存在的任何一个学生）
+select *
+from S_C_Score
+where 姓名='王林';
+2、在视图CNO_AVG中，查询平均成绩大于80分的课程号和平均成绩
+select *
+from CNO_AVG
+where 平均成绩>80;
+3、在视图S_C_Score上，将计算机网络课程的成绩全部增加5分
+update S_C_Score
+set 成绩=成绩+5
+where 课程名='计算机基础';

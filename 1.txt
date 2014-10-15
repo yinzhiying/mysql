@@ -1,0 +1,19 @@
+insert into xs
+values('081101','王林','计算机','1','1990-02-10',50,null,null);
+insert into xs
+values('081102','程明','计算机','1','1991-02-01',50,null,null);
+insert into xs
+values('081201','王敏','通讯工程','1','1986-06-10',42,null,null);
+insert into xs
+values('081202','王林','通讯工程','1','1989-01-29',40,null,null);
+insert into kc
+values('101','计算机基础','1','80',5);
+insert into kc
+values('102','程序设计与语言','2','68',4);
+insert into kc
+values('206','离散数学','4','68',4);
+
+insert into kc
+values('208','数据结构','5','68',4);
+insert into kc 
+values('301','计算机网络','7','51',3);

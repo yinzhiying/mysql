@@ -1,0 +1,30 @@
+#1、查询所有学生的基本情况
+use xscj
+select * 
+from xs;
+
+#2、查询学生的学号、姓名和年龄（查询返回结果中属性名为：学号、姓名、年龄）；
+
+select 学号,姓名,(year(current_date)-year(出生日期)) as 年龄
+from xs;
+
+#3、查询选修了课程的学生人数，并利用GROUP_CONCAT函数将学号输出。
+
+select count(distinct 学号),group_concat(distinct 学号) from xs_kc;
+
+
+#4、查询xs_kc中的最高分和最低分，以及到最低分之间的差距
+
+select max(成绩),min(成绩),(max(成绩)-min(成绩)) from xs_kc;
+
+#5、查询学生的选课情况。包括：学号、课程号、成绩等级（优良中及格和不及格五级）
+
+select 学号,课程号,成绩,
+case
+when 成绩>=90 then '优'
+when 成绩>=80 then '良'
+when 成绩>=70 then '中'
+when 成绩>=60 then '及格'
+else '不及格'
+end as 等级
+from xs_kc;

@@ -1,0 +1,155 @@
+创建一个名称为 myproc 的存储过程，该存储过程的功能是从数据表 xs 中查询所有男同学的信息，并调用该存储过程
+delimiter $$
+create procedure myproc()
+begin
+select * from xs where 性别='1';
+end $$
+delimiter ;
+call myproc();
+
+创建一个名为Query_student的存储过程，该存储过程的功能是根据学号查询学生表中某一学生的姓名、年级、性别及出生日期。
+delimiter $$
+create procedure Query_student(in xh char(6))
+begin
+select 姓名,性别,出生日期
+from xs
+where 学号=xh;
+end $$
+delimiter ;
+call Query_student();
+创建存储过程，获得xs表中学生的人数，并调用该存储过程。
+delimiter $$
+create procedure sum_student()
+begin
+select count(学号) as '人数'
+from xs;
+end $$
+delimiter ;
+call sum_student();
+利用三种循环结构，计算任意两个整数间所有数值的和。
+
+
+(1)
+delimiter $$  
+create procedure xscj.add1(in k1 integer,in k2 integer,out k3 integer)
+begin set k3=0;
+  while k1<=k2 do
+      set k3= k3+k1;
+      set k1=k1+1;
+ 
+  end while;
+  end $$
+ delimiter ;
+ call add1(2,5,@com);
+ select @com;
+(2)
+delimiter $$  
+create procedure xscj.add2(in k1 integer,in k2 integer,out k3 integer)
+begin set k3=0;
+    repeat
+     set k3= k3+k1;
+      set k1=k1+1;
+    until k1>k2
+  end repeat;
+  end $$
+ delimiter ;
+   
+
+call add2(2,5,@com1);
+ select @com1;
+
+
+
+(3)delimiter $$  
+create procedure xscj.add3(in k1 integer,in k2 integer,out k3 integer)
+begin set k3=0;
+    label:loop
+     set k3= k3+k1;
+      set k1=k1+1;
+    if k1>k2 then
+     leave label;
+   end if;
+  end loop label;
+  end $$
+ delimiter ;
+
+call add3(2,5,@com2);
+select @com2;
+
+创建存储过程，使用游标确定一个学生的年龄是否排在前三名，结果为true表示是，结果为flase表示否。
+delimiter $$
+create procedure student(in xh char(6),out re boolean)
+begin
+       declare xh1 char(6);
+       declare found boolean default true;
+       declare found_xs cursor for
+            select 学号 from xs order by 出生日期 limit 3;
+       declare continue handler for not found
+          set found=false;
+       set re =false;
+       open found_xs;
+        fetch found_xs into xh1;
+       while found do
+          if xh=xh1 then 
+             set re=true;
+             set found=false;
+          else 
+            fetch found_xs into xh1;
+          end if;
+       end while;
+       close found_xs;
+end $$
+delimiter ; 
+
+call student('081103',@a);
+select @a;
+
+
+定义一个存储函数，计算任意两个整数间所有数值的和。
+delimiter $$
+create function add4(k1 integer,k2 integer)
+returns integer
+begin
+declare v1 int;
+
+declare k3 int;
+set v1=k1;
+set k3 =0;
+while v1<=k2 do set k3=k3+k1;set v1=v1+1;
+end while; 
+return k3;
+end $$
+delimiter ;
+
+select add4(1,10);
+定义触发器xs_insert实现如下功能：当向xs表中插入数据时，将新插入的数据删除
+。
+delimiter $$
+create trigger xs_insert after insert
+  on xs for each row
+begin
+delete from xs where 学号=new.学号;
+end$$
+delimiter ;
+
+创建一个立即启动的事件：插入学生信息（‘091103’，‘张建’，‘软件工程’，1，‘1994-06-05’，50，null，null）
+use xscj
+create event direct
+on schedule at now()
+do insert into xs values('091103','张建','软件工程',1,'1994-06-05',50,null,null);
+创建事件：每秒将当前日期时间插入到数据表中。
+create table time3
+(日期时间 timestamp not null);
+create event date3
+ on schedule  every 1 second
+ do insert into time3 values(now());
+
+
+
+
+
+
+
+
+
+

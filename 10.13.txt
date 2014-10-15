@@ -1,0 +1,583 @@
+#建库
+create database xscj;
+#用库
+use xscj;
+#创建学生表
+create table xs
+(
+xuehao char(6) not null primary key,
+xingming  char(8) not null,
+zhuanyeming char(10) null,
+xingbie tinyint(1) not null default 1,
+chushengriqi date not null,
+zongxuefen tinyint(1)null,
+zhaopian  blob null,
+beizhu text null
+) engine=innodb;
+
+#创建课程表
+create table kc
+(
+kechenghao char(3) not null primary key,
+kechengming char(16) not null,
+kaikexueqi tinyint(1) not null default 1,
+xueshi tinyint(1) not null,
+xuefen tinyint(1) null
+)engine = innodb;
+
+#创建成绩表
+create table xs_kc
+(
+xuehao char(6) not null,
+kechenghao char(3) not null,
+chengji tinyint(1) null,
+xuefen tinyint(1) null,
+primary key(xuehao,kechenghao),
+foreign key(xuehao) references xs(xuehao),
+foreign key(kechenghao) references kc(kechenghao)
+)engine=innodb;
+#修改表练习,修改表结构 show create table tb_name
+
+#1.复制kc表为kc2；
+create table kc2 like kc;
+
+#2.为kc2增加一列cno，并将该列设置为自增属性，并将其添加到第一个属性的位置；增加开课院系字段
+alter table kc2 add cno tinyint  not null auto_increment unique first;
+alter table kc2 add  column kaikeyuanxi char(8) not null;
+
+#3.将kc2中开课学期的默认值修改为2
+alter table kc2 alter kaikeyuanxi set default 2;
+
+#4.kc2表中的学时改名为学时数
+alter table kc2  change xueshi xueshishu tinyint;
+
+#5.将kc2学时数字段类型修改为tinyint(3),并且数据位数不足三位时，以零填充
+alter table kc2 modify xueshishu tinyint(3) zerofill;
+
+#6.删除开课院系字段
+alter table kc2 drop kaikeyuanxi;
+
+#识别中文
+set character_set_database='gbk';
+set character_set_server='gbk';
+set character_set_system='gbk';
+set character_set_client='gbk';
+set character_set_connection='gbk';
+set character_set_results='gbk';
+set character_set_filesystem='gbk';
+
+
+#插入xs学生信息
+insert into xs
+ values('081101','王林','计算机',1,'1990-02-10',50,null,null);
+insert into xs
+ values('081102','程明','计算机',1,'1991-02-01',50,null,null);
+insert into xs
+ values('081103','王燕','计算机',0,'1989-10-06',50,null,null);
+insert into xs
+ values('081104','韦严平','计算机',0,'1990-08-26',50,null,null);
+insert into xs
+ values('081106','李方方','计算机',0,'1990-11-20',50,null,null);
+insert into xs
+ values('081107','李明','计算机',1,'1990-5-1',54,null,'提前修完数据结构，并获学分');
+insert into xs
+ values('081108','林一帆','计算机',1,'1989-8-5',52,null,'已提前修完一门');
+insert into xs
+ values('081109','张强民','计算机',1,'1989-8-11',50,null,null);
+insert into xs
+ values('081110','张蔚','计算机',0,'1991-7-22',50,null,'三好学生');
+insert into xs
+ values('081111','赵琳','计算机',0,'1990-3-18',50,null,null);
+insert into xs
+ values('081113','严红','计算机',0,'1989-8-11',48,null,'有一门课不及格，待补考');
+insert into xs
+ values('081201','王敏','通信工程',1,'1989-6-10',42,null,null);
+insert into xs
+ values('081202','王林','通信工程',1,'1989-1-29',40,null,'有一门课不及格，待补考');
+insert into xs
+ values('081203','王玉民','通信工程',1,'1990-3-26',42,null,null);
+insert into xs
+ values('081204','马琳琳','通信工程',0,'1989-2-10',42,null,null);
+insert into xs
+ values('081206','李计','通信工程',1,'1989-9-20',42,null,null);
+insert into xs
+ values('081210','李红庆','通信工程',1,'1989-5-1',44,null,'提前修完一门，并获学分');
+insert into xs
+ values('081216','孙祥欣','通信工程',1,'1989-3-19',42,null,null);
+insert into xs
+ values('081218','孙研','通信工程',1,'1990-10-9',42,null,null);
+insert into xs
+ values('081220','吴薇华','通信工程',0,'1990-3-18',42,null,null);
+insert into xs
+ values('081221','刘燕敏','通信工程',0,'1989-11-12',42,null,null);
+insert into xs
+ values('081241','罗林琳','通信工程',0,'1990-1-30',50,null,'转专业学习');
+
+#插入kc课程信息
+
+insert into kc
+values('101','计算机基础',1,80,5);
+insert into kc
+values('102','程序设计与语言',2,68,4);
+insert into kc
+values('206','离散数学',4,68,4);
+insert into kc
+values('208','数据结构',5,68,4);
+insert into kc
+values('301','计算机网络',7,51,3);
+insert into kc
+values('210','计算机原理',5,85,5);
+insert into kc
+values('209','操作系统',6,68,4);
+insert into kc
+values('212','数据库原理',7,68,4);
+insert into kc
+values('302','软件工程',7,51,3);
+
+#插入xs_kc学生信息
+insert into xs_kc
+values('081101','101',80,null);
+insert into xs_kc
+values('081101','102',78,null);
+insert into xs_kc
+values('081101','206',76,null);
+insert into xs_kc
+values('081103','101',62,null);
+insert into xs_kc
+values('081103','102',70,null);
+insert into xs_kc
+values('081103','206',81,null);
+insert into xs_kc
+values('081104','101',90,null);
+insert into xs_kc
+values('081104','102',84,null);
+insert into xs_kc
+values('081104','206',65,null);
+insert into xs_kc
+values('081102','102',78,null);
+insert into xs_kc
+values('081102','206',78,null);
+insert into xs_kc
+values('081106','101',65,null);
+insert into xs_kc
+values('081106','102',71,null);
+insert into xs_kc
+values('081106','206',80,null);
+insert into xs_kc
+values('081107','101',78,null);
+insert into xs_kc
+values('081107','102',80,null);
+insert into xs_kc
+values('081107','206',68,null);
+insert into xs_kc
+values('081108','101',85,null);
+insert into xs_kc
+values('081108','102',64,null);
+insert into xs_kc
+values('081108','206',87,null);
+insert into xs_kc
+values('081109','101',66,null);
+insert into xs_kc
+values('081109','102',83,null);
+insert into xs_kc
+values('081109','206',70,null);
+insert into xs_kc
+values('081110','101',95,null);
+insert into xs_kc
+values('081110','102',90,null);
+insert into xs_kc
+values('081110','206',89,null);
+insert into xs_kc
+values('081111','101',91,null);
+insert into xs_kc
+values('081111','102',70,null);
+insert into xs_kc
+values('081111','206',76,null);
+insert into xs_kc
+values('081113','101',63,null);
+insert into xs_kc
+values('081113','102',79,null);
+insert into xs_kc
+values('081113','206',60,null);
+insert into xs_kc
+values('081201','101',80,null);
+insert into xs_kc
+values('081202','101',65,null);
+insert into xs_kc
+values('081203','101',87,null);
+insert into xs_kc
+values('081204','101',91,null);
+insert into xs_kc
+values('081210','101',76,null);
+insert into xs_kc
+values('081216','101',81,null);
+insert into xs_kc
+values('081218','101',70,null);
+insert into xs_kc
+values('081220','101',82,null);
+insert into xs_kc
+values('081221','101',76,null);
+insert into xs_kc
+values('081241','101',90,null);
+
+
+#给计算机专业的学生开设必修“计算机网络”，建设选课信息
+insert into xs_kc(xuehao,kechenghao)
+   select xuehao,kechenghao
+   from  xs,kc
+   where 
+     zhuanyeming='计算机'and kechengming='计算机网络';
+#1.'081101'同学的出生日期修改为：'1989-02-15'
+update xs
+  set chushengriqi='1989-02-15'
+  where xuehao='081101';
+
+#2.将王燕的程序设计与语言成绩修改为89
+update xs_kc 
+  set chengji=89
+  where xuehao=(select xuehao from xs where xingming='王燕')
+   and kechenghao=(select kechenghao from kc where kechengming='程序设计与语言');
+
+#3.删除081102同学的基本信息（若学生与课程表中有该学生的选课记录，能否成功删除？）
+
+#查询选修了102号的学生学号；
+#查询选修了计算机基础课程的学生学号
+#查询选修了计算机基础课程的学生学号和姓名
+
+#1.查询所有学生的基本情况
+ select * from xs;
+#2.查询学生学号、姓名、年龄（查询返回结果中属性名为：学号、姓名、年龄）
+select xuehao,xingming,(2014-year(chushengriqi))as nianling
+   from xs;
+#3.查询选修了课程的学生人数，并利用GROUP_CONCAT函数将学号输出
+select count(distinct xuehao),GROUP_CONCAT(distinct xuehao)
+from xs_kc;
+#4.查询xs_kc中的最高分和最低分，以及到低分之间的差距
+select MAX(chengji) as 最高分,MIN(chengji) as 最低分,MAX(chengji)-MIN(chengji) as 差距
+from xs_kc;
+#5.查询学生的选课情况，包括：学号、课程号、成绩登记（优良中及格和不及格五级）
+select xuehao,kechenghao,
+   case
+     when chengji <60 then'不及格'
+     when chengji>=60 and chengji<=70 then'及格'
+     when chengji>70 and chengji<=80 then'中'
+     when chengji>80 and chengji<=90 then'良'
+     else'优秀'
+     end as 成绩登记
+    from xs_kc;
+#1.检索至少选修了课程号为102和201的学生学号；（表的自身连接实现）
+select xuehao
+   from xs_kc,xs_kc
+where xs_kc=102 and xs_ke=201;
+#2.输出学生成绩在80-90之间的学生名单，列出学号、姓名、分数、课程名。
+select xs.xuehao,xingming,chengji,kechengming
+    from xs,kc,xs_kc
+    where kc.kechenghao=xs_kc.kechenghao and xs.xuehao=xs_kc.xuehao and (chengji>=80 and chengji<=90);
+#chengji between 80 and 90
+#1.查询选修课程号为102的学生的学号和成绩
+select xuehao,chengji
+from xs_kc
+where kechenghao=102;
+#2.查询选修课程号为102或201且分数大于等于85学生的学号、课程号和成绩
+select xuehao,kechenghao,chengji
+from xs_kc
+where (kechenghao=102 or kechenghao=201) and chengji>=85;
+#3.查询既不是女生年龄也不是20岁的学生
+select *
+from xs
+where xuehao not in
+(select xuehao from xs
+where xingbie='女' and 2014-year(chushengriqi)=20);
+
+#4.查询学好倒数第二个数字为0的学生的基本情况
+select * from xs where xuehao like '%0_';
+#定义视图1.创建学生选课情况试图s-c-score,包括学号、姓名、课程名以及成绩
+use xscj;
+create view s_c_score(xuehao,xingming,kechengming,chengji)
+as
+select xs.xuehao,xingming,kc.kechengming,chengji
+from xs,kc,xs_kc
+where xs.xuehao=xs_kc.xuehao and kc.kechenghao=xs_kc.kechenghao; 
+
+#2.将每门课程和它的平均成绩定义为一个视图cno-avg;
+create view cno_avg(课程,平均成绩)
+as 
+select kc.kechengming,avg(xs_kc.chengji)
+from kc,xs_kc
+where kc.kechenghao=xs_kc.kechenghao
+group by kc.kechengming;
+
+#查询与更新视图1.在视图s-c-score上查询王林的选课情况
+select * from s_c_score where xingming='王林';
+#2.在视图cno-avg中，查询平均成绩大于80的课程号和平均成绩
+select * from cno_avg where 平均成绩>0.1;
+#3.在视图s-c-score上，将计算机网络课程的成绩全部增加5分
+update s_c_score
+  set chengji=chengji+5
+where kechengming='计算机网络';
+
+
+
+
+
+#第四章select练习
+
+
+#1、 输出刘力同学所在系的学生清单；（使用IN和复合条件查询分别实现）
+select*
+from xs
+ where zhuanyeming in
+(select zhuanyeming
+ from xs
+ where xingming='王林'
+);
+
+#2、 使用 ALL输出所有成绩都高于90分的学生名单，列出其学生学号、姓名、分数和课程号；
+select xs.xuehao,xingming,chengji,kechenghao
+from xs,xs_kc
+where xs.xuehao=xs_kc.xuehao and 90<all
+ (select chengji
+  from xs_kc
+  where xs_kc.xuehao=xs.xuehao
+);
+
+
+
+        
+#3、分别使用IN和EXISTS检索至少选修了课程号为102和201的学生学号；
+ select xuehao
+from xs_kc
+where kechenghao='102' and exists
+(select xuehao
+from xs_kc
+where kechenghao='201');
+
+select xuehao
+from xs_kc
+where kechenghao='102' and xuehao in
+(select xuehao
+from xs_kc
+where kechenghao='201');
+
+
+select xuehao from xs_kc
+where exists(select a.xuehao from xs_kc as a,xs_kc as b
+where a.kechenghao='102' and b.kechenghao='201' and a.xuehao=b.xuehao);
+
+#4、查询没有选修课程号为102，也没有选修课程号为201的学生的学号、课程号和成绩；
+ select xuehao,kechenghao,chengji
+ from xs_kc
+ where (kechenghao<>'102') and xuehao not in
+(select xuehao  from xs_kc where kechenghao='101');
+
+#5、检索所有课程都及格的学生的学号、平均成绩；（至少有四种方法可以实现此查询）。
+select xuehao as 学号,avg(chengji) as 平均成绩
+from xs_kc
+where xuehao not in(select xuehao from xs_kc where chengji<60);
+
+#6、查找选修了全部课程的同学的姓名。
+
+
+
+#练习：
+#1、查询每个专业男、女生人数
+
+
+#2、查找选修课程超过2门且成绩都在80分以上的学生的学号。
+ 
+
+#3、查找xs表中从第4位同学开始的5位学生的信息。
+
+
+
+
+#例5.12，
+1、将xs表复制一份（包括内容和结构）xs2
+
+create table xs2 like xs;
+insert into xs2(select * from xs);
+
+2、参照例题创建表xs1
+create table xs1
+(
+xuehao varchar(6) null,
+xingming varchar(8) not null,
+chushengriqi datetime null,
+primary key (xingming),
+foreign key (xuehao)
+  references xs2 (xuehao)
+     on delete cascade
+     on update cascade
+);
+3、将xs2的内容插入到xs1
+update xs1 set xs1.xingming="舟舟舟" where xs1.xuehao="081101";
+insert into xs1(select xuehao,xingming,chushengriqi from xs2);
+
+4、删除xs2表中某个学生的信息，看能否成功
+delete from xs2
+ where xingming="王林";
+
+5、删除xs表中的某个有选课信息的学生，看是否能够成功删除
+
+delete from xs
+ where xingming="王林";
+
+
+
+#例题
+select 'hello','"hello"','""hello""','hel''lo','\'hello';
+
+select 0x41,cast(0x41 as unsigned);
+
+select hex('CAT');
+
+select true ,false;
+
+set @name='王林';
+
+set @user1=1,@user2=2,@user3=3;
+
+select @name;
+
+use xscj
+set @ student=(select xingming from xs where xuehao='081101');
+
+
+#10.8
+#1.创建一个名称为 myproc 的存储过程，该存储过程的功能是从数据表 xs 中查询所有男同学的信息，并调用该存储过程
+use xscj;
+delimiter $$
+create procedure myproc()
+begin
+ select * from xs where xingbie='1';
+end $$
+delimiter ;
+  
+CALL myproc();
+
+#2.创建一个名为Query_student的存储过程，该存储过程的功能是根据学号查询学生表中某一学生的姓名、年级、性别及出生日期。
+
+delimiter $$
+create procedure Query_student(in xh char(6),out xm char(8),out xb tinyint(1),out csrq date)
+begin
+ select xingming,xingbie,chushengriqi from xs where xuehao=xh;
+end $$
+
+delimiter ;
+
+CALL Query_student('081101',@xm,@xb,@csrq);
+
+#3.创建存储过程，通过变量获得xs表中学生的人数（需要输出参数），并调用该存储过程
+
+delimiter $$
+create procedure sum_student()
+begin
+select count(xuehao) as '人数'
+from xs;
+end $$
+delimiter ;
+call sum_student();
+
+#4.利用三种循环结构，计算任意两个整数间所有数值的和。
+
+
+delimiter $$
+create procedure sum_shu(in k1 int,in k2 int,out k3 int)
+begin
+set k3=0;
+while k1<=k2 do
+ set k1=k1+1;
+ set k3=k3+k1;
+end while;
+end $$
+delimiter ;
+call sum_shu(6,11,@com);
+ select @com;
+
+
+
+
+
+delimiter $$
+create procedure sum_shu1(in k1 integer,in k2 integer,out k3 integer)
+begin set k3=0;
+
+repeat
+ set k3=k3+k1;
+ set k1=k1+1;
+until k1>k2
+end repeat;
+
+end $$
+delimiter ;
+call sum_shu1(6,11,@cam1);
+ select @cam1;
+
+
+delimiter $$  
+create procedure xscj.add3(in k1 integer,in k2 integer,out k3 integer)
+begin set k3=0;
+    label:loop
+     set k3= k3+k1;
+      set k1=k1+1;
+    if k1<=k2 then
+     leave label;
+   end if;
+  end loop label;
+  end $$
+ delimiter ;
+
+创建存储过程，使用游标确定一个学生的年龄是否排在前三，结果为TRUE表示是，结果为FALSE表示否
+
+定义一个过程函数，计算任意两个整数间所有数值的和
+delimiter $$
+create function sum_shu1(k1 integer,k2 integer)
+return integer
+
+begin 
+declare k3 integer;
+set k3=0;
+while k1<=k2 do
+ set k1=k1+1;
+ set k3=k3+k1;
+end while;
+
+return k3;
+end$$
+delimiter ;
+
+
+select sum_shu1(6,11);
+??
+
+
+#1.定义触发器xs_insert实现如下功能：当向xs表中插入数据时，将新插入的数据删除。
+delimiter $$
+create trigger xs_delete after  insert
+   on xs for each row
+begin
+   delete from xs where xuehao=new.xuehao;
+end$$
+delimiter ;
+
+insert into xs values('091103','张建','软件工程',1,'1994-06-05',50,null,null);
+select * from xs;
+
+
+#2.创建一个立即启动的事件：插入学生信息（'091103','张建','软件工程',1,'1994-06-05',50,null,null）;
+
+create event direct
+  on schedule at now()
+  do insert into xs values('091103','软件工程',1,'1994-06-05',50,null,null);
+
+
+
+
+#3.创建事件：每秒将当前日期时间插入到数据表中。
+
+delimiter $$
+create event update_time
+   on schedule every 1 second
+  
+
+

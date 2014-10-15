@@ -1,0 +1,12 @@
+insert into xs_kc(xuehao,kechenghao)
+select xuehao,kechenghao
+from xs,kc
+where zhuanyeming='计算机'and kechengming='计算机网络'
+
+
+
+
+
+
+
+source g:/xscj.sql
